@@ -1,0 +1,139 @@
+===========================
+PROTOKOL FILE SERVER
+===========================
+
+TUJUAN: Melayani client dalam request file server.
+
+ATURAN PROTOKOL:
+- Client harus mengirimkan request dalam bentuk string.
+- String harus dalam format:
+  REQUEST spasi PARAMETER
+- PARAMETER dapat berkembang menjadi PARAMETER1 spasi PARAMETER2 dan seterusnya.
+
+INFORMASI UMUM:
+- Jika request tidak dikenali, akan menghasilkan pesan:
+  - status: ERROR
+  - data: request tidak dikenali
+- Semua result akan diberikan dalam bentuk JSON dan diakhiri dengan karakter ASCII #13#10#13#10 atau "\r\n\r\n".
+
+===========================
+REQUEST YANG DILAYANI
+===========================
+
+LIST
+- TUJUAN: Untuk mendapatkan daftar seluruh file yang dilayani oleh file server.
+- PARAMETER: Tidak ada.
+- RESULT:
+  - BERHASIL:
+    - status: OK
+    - data: list file
+  - GAGAL:
+    - status: ERROR
+    - data: pesan kesalahan
+
+GET
+- TUJUAN: Untuk mendapatkan isi file dengan menyebutkan nama file dalam parameter.
+- PARAMETER:
+  - PARAMETER1: Nama file
+- RESULT:
+  - BERHASIL:
+    - status: OK
+    - data_namafile: nama file yang diminta
+    - data_file: isi file yang diminta (dalam bentuk base64)
+  - GAGAL:
+    - status: ERROR
+    - data: pesan kesalahan
+
+UPLOAD
+- TUJUAN: Untuk mengupload file ke server.
+- PARAMETER:
+  - PARAMETER1: Nama file
+  - PARAMETER2: Isi file (dalam bentuk base64)
+- RESULT:
+  - BERHASIL:
+    - status: OK
+    - data: pesan sukses, misalnya "filename uploaded successfully"
+  - GAGAL:
+    - status: ERROR
+    - data: pesan kesalahan
+
+DELETE
+- TUJUAN: Untuk menghapus file dengan nama yang diberikan.
+- PARAMETER:
+  - PARAMETER1: Nama file
+- RESULT:
+  - BERHASIL:
+    - status: OK
+    - data: pesan sukses, misalnya "filename deleted successfully"
+  - GAGAL:
+    - status: ERROR
+    - data: pesan kesalahan
+
+===========================
+CONTOH REQUEST DAN RESPONSE
+===========================
+
+1. LIST Request:
+   REQUEST: 
+   LIST
+
+   Response (Berhasil):
+   {
+     "status": "OK",
+     "data": ["file1.txt", "file2.jpg", "example.pdf"]
+   }
+
+   Response (Gagal):
+   {
+     "status": "ERROR",
+     "data": "No files found"
+   }
+
+2. GET Request:
+   REQUEST: 
+   GET example.txt
+
+   Response (Berhasil):
+   {
+     "status": "OK",
+     "data_namafile": "example.txt",
+     "data_file": "base64encodedcontent"
+   }
+
+   Response (Gagal):
+   {
+     "status": "ERROR",
+     "data": "File not found"
+   }
+
+3. UPLOAD Request:
+   REQUEST: 
+   UPLOAD newfile.txt base64encodedcontent
+
+   Response (Berhasil):
+   {
+     "status": "OK",
+     "data": "newfile.txt uploaded successfully"
+   }
+
+   Response (Gagal):
+   {
+     "status": "ERROR",
+     "data": "Upload failed"
+   }
+
+4. DELETE Request:
+   REQUEST: 
+   DELETE example.txt
+
+   Response (Berhasil):
+   {
+     "status": "OK",
+     "data": "example.txt deleted successfully"
+   }
+
+   Response (Gagal):
+   {
+     "status": "ERROR",
+     "data": "File not found"
+   }
